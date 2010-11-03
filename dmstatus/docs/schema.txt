@@ -1,0 +1,362 @@
+-- MySQL dump 10.13  Distrib 5.1.51, for apple-darwin10.3.0 (i386)
+--
+-- Host: localhost    Database: import_status
+-- ------------------------------------------------------
+-- Server version	5.1.51
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `build_properties`
+--
+
+DROP TABLE IF EXISTS `build_properties`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `build_properties` (
+  `property_id` int(11) NOT NULL,
+  `build_id` int(11) NOT NULL,
+  KEY `ix_build_properties_build_id` (`build_id`),
+  KEY `ix_build_properties_property_id` (`property_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `build_requests`
+--
+
+DROP TABLE IF EXISTS `build_requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `build_requests` (
+  `build_id` int(11) NOT NULL,
+  `request_id` int(11) NOT NULL,
+  KEY `ix_build_requests_request_id` (`request_id`),
+  KEY `ix_build_requests_build_id` (`build_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `builder_slaves`
+--
+
+DROP TABLE IF EXISTS `builder_slaves`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `builder_slaves` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `builder_id` int(11) NOT NULL,
+  `slave_id` int(11) NOT NULL,
+  `added` datetime NOT NULL,
+  `removed` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_builder_slaves_removed` (`removed`),
+  KEY `ix_builder_slaves_slave_id` (`slave_id`),
+  KEY `ix_builder_slaves_added` (`added`),
+  KEY `ix_builder_slaves_builder_id` (`builder_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=418273 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `builders`
+--
+
+DROP TABLE IF EXISTS `builders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `builders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL,
+  `master_id` int(11) NOT NULL,
+  `category` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`,`master_id`),
+  KEY `ix_builders_master_id` (`master_id`),
+  KEY `ix_builders_name` (`name`),
+  KEY `ix_builders_category` (`category`)
+) ENGINE=MyISAM AUTO_INCREMENT=7171 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `builds`
+--
+
+DROP TABLE IF EXISTS `builds`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `builds` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `buildnumber` int(11) NOT NULL,
+  `builder_id` int(11) NOT NULL,
+  `slave_id` int(11) NOT NULL,
+  `master_id` int(11) NOT NULL,
+  `starttime` datetime DEFAULT NULL,
+  `endtime` datetime DEFAULT NULL,
+  `result` int(11) DEFAULT NULL,
+  `reason` varchar(500) DEFAULT NULL,
+  `source_id` int(11) DEFAULT NULL,
+  `lost` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `source_id` (`source_id`),
+  KEY `master_id` (`master_id`),
+  KEY `ix_builds_slave_id` (`slave_id`),
+  KEY `ix_builds_buildnumber` (`buildnumber`),
+  KEY `ix_builds_builder_id` (`builder_id`),
+  KEY `ix_builds_result` (`result`),
+  KEY `ix_builds_starttime` (`starttime`),
+  KEY `ix_builds_endtime` (`endtime`)
+) ENGINE=MyISAM AUTO_INCREMENT=1896650 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `changes`
+--
+
+DROP TABLE IF EXISTS `changes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `changes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `number` int(11) NOT NULL,
+  `branch` varchar(50) DEFAULT NULL,
+  `revision` varchar(50) DEFAULT NULL,
+  `who` varchar(200) DEFAULT NULL,
+  `comments` text,
+  `when` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_changes_who` (`who`)
+) ENGINE=MyISAM AUTO_INCREMENT=431096 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `file_changes`
+--
+
+DROP TABLE IF EXISTS `file_changes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `file_changes` (
+  `file_id` int(11) NOT NULL,
+  `change_id` int(11) NOT NULL,
+  KEY `ix_file_changes_change_id` (`change_id`),
+  KEY `ix_file_changes_file_id` (`file_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `files`
+--
+
+DROP TABLE IF EXISTS `files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `files` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `path` varchar(400) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_files_path` (`path`)
+) ENGINE=MyISAM AUTO_INCREMENT=233626 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `master_slaves`
+--
+
+DROP TABLE IF EXISTS `master_slaves`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `master_slaves` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `slave_id` int(11) NOT NULL,
+  `master_id` int(11) NOT NULL,
+  `connected` datetime NOT NULL,
+  `disconnected` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_master_slaves_master_id` (`master_id`),
+  KEY `ix_master_slaves_slave_id` (`slave_id`),
+  KEY `ix_master_slaves_disconnected` (`disconnected`),
+  KEY `ix_master_slaves_connected` (`connected`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `masters`
+--
+
+DROP TABLE IF EXISTS `masters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `masters` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(50) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_masters_url` (`url`)
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `patches`
+--
+
+DROP TABLE IF EXISTS `patches`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `patches` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `patch` text,
+  `patchlevel` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `properties`
+--
+
+DROP TABLE IF EXISTS `properties`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `properties` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) DEFAULT NULL,
+  `source` varchar(40) DEFAULT NULL,
+  `value` text,
+  PRIMARY KEY (`id`),
+  KEY `ix_properties_source` (`source`),
+  KEY `ix_properties_name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=1964526 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `request_properties`
+--
+
+DROP TABLE IF EXISTS `request_properties`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `request_properties` (
+  `property_id` int(11) NOT NULL,
+  `request_id` int(11) NOT NULL,
+  KEY `ix_request_properties_request_id` (`request_id`),
+  KEY `ix_request_properties_property_id` (`property_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `requests`
+--
+
+DROP TABLE IF EXISTS `requests`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `requests` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `submittime` datetime DEFAULT NULL,
+  `builder_id` int(11) DEFAULT NULL,
+  `startcount` int(11) NOT NULL,
+  `source_id` int(11) DEFAULT NULL,
+  `lost` tinyint(1) NOT NULL,
+  `cancelled` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `source_id` (`source_id`),
+  KEY `ix_requests_builder_id` (`builder_id`),
+  KEY `ix_requests_submittime` (`submittime`),
+  KEY `ix_requests_cancelled` (`cancelled`),
+  KEY `ix_requests_lost` (`lost`),
+  KEY `ix_requests_startcount` (`startcount`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `slaves`
+--
+
+DROP TABLE IF EXISTS `slaves`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `slaves` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_slaves_name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=1007 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `source_changes`
+--
+
+DROP TABLE IF EXISTS `source_changes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `source_changes` (
+  `source_id` int(11) NOT NULL,
+  `change_id` int(11) NOT NULL,
+  `order` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  KEY `source_id` (`source_id`),
+  KEY `change_id` (`change_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1855459 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sourcestamps`
+--
+
+DROP TABLE IF EXISTS `sourcestamps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sourcestamps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `branch` varchar(50) DEFAULT NULL,
+  `revision` varchar(50) DEFAULT NULL,
+  `patch_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `patch_id` (`patch_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1363188 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `steps`
+--
+
+DROP TABLE IF EXISTS `steps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `steps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(256) NOT NULL,
+  `description` text,
+  `build_id` int(11) NOT NULL,
+  `order` int(11) NOT NULL,
+  `starttime` datetime DEFAULT NULL,
+  `endtime` datetime DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_steps_build_id` (`build_id`),
+  KEY `ix_steps_status` (`status`),
+  KEY `ix_steps_name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=55859661 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-10-29 19:44:44
